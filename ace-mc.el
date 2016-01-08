@@ -71,8 +71,9 @@ Also called when chosen character isn't found while zapping."
     (if (use-region-p)
 	(progn
 	  (when (> (point) (mark))
-	      (exchange-point-and-mark))
-	  (deactivate-mark)
+	    (exchange-point-and-mark)
+	    (mc/execute-command-for-all-fake-cursors 'exchange-point-and-mark))
+	    (deactivate-mark)
 	  (ajmc/add-char (buffer-substring-no-properties (mark) (point))))
       (ajmc/add-char (unless (eq ajmc/ace-mode-function 'ace-jump-line-mode)
 		       (read-char "Query Char:"))))))
