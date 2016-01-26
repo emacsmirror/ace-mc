@@ -1,5 +1,28 @@
+;;; ace-mc.el --- Ace Jump - Multiple Cursors
+
+;; Copyright (C) 2015 Josh Moller-Mara
+
+;; Author: Josh Moller-Mara <jmm@cns.nyu.edu>
+;; Version: 1.0
+;; Package-Requires ((ace-jump-mode "1.0"))
+;; Keywords: octopress, blog
+;; URL: https://github.com/aaronbieber/octopress.el
+
+;;; Commentary:
+
+;; ace-mc.el is a package that allows you to add a Multiple Cursors
+;; mode cursor using ace-jump.
+
+;; This package adds the command `ace-jump-add-multiple-cursor', which
+;; acts like `ace-jump-mode'. It will continue to keep prompting for
+;; places to add cursors until you hit Enter.
+
+;;; Code:
 (require 'ace-jump-mode)
 (require 'multiple-cursors-core)
+
+(defvar ajmc/always-loop nil
+  "Non-nil if `ace-jump-add-multiple-cursor' automatically loops without a prefix.")
 
 (defvar ajmc/marking nil
   "Internal flag for detecting if currently marking.")
@@ -57,9 +80,9 @@ Also called when chosen character isn't found while zapping."
   "Call `ace-jump-char-mode' and add a cursor at the point."
   (interactive "p")
   (let* ((preindex (/ (logb prefix) 2))
-	 (index (- preindex 1))
+	 (index (- preindex (if ajmc/always-loop 0 1)))
 	(submode-list-length (length ace-jump-mode-submode-list)))
-    (setq ajmc/loop-marking (or (use-region-p) (> prefix 1)))
+    (setq ajmc/loop-marking (or ajmc/always-loop (use-region-p) (> prefix 1)))
     (if (< index 0)
         (setq index 0))
     (if (>= index submode-list-length)
@@ -105,3 +128,5 @@ Also called when chosen character isn't found while zapping."
 	ace-jump-move))
 
 ;; (interactive (list (read-char "Query Char:")))
+
+;;; ace-mc.el ends here
