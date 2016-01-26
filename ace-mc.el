@@ -20,6 +20,7 @@
 ;;; Code:
 (require 'ace-jump-mode)
 (require 'multiple-cursors-core)
+(require 'dash)
 
 (defvar ajmc/always-loop nil
   "Non-nil if `ace-jump-add-multiple-cursor' automatically loops without a prefix.")
@@ -50,7 +51,10 @@
   "Zap after marking with `ace-jump-char-mode.'."
   (if (not ajmc/marking)
       (ajmc/reset)
-    (mc/create-fake-cursor-at-point)
+    (let ((ajmc/fake-cursor-at-point (-filter 'mc/fake-cursor-p (overlays-at (point)))))
+      (if ajmc/fake-cursor-at-point
+	  (mc/remove-fake-cursor (car ajmc/fake-cursor-at-point))
+	(mc/create-fake-cursor-at-point)))
     (mc/maybe-multiple-cursors-mode)
     (when ajmc/saved-point
       (goto-char ajmc/saved-point))
