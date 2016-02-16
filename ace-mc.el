@@ -87,8 +87,6 @@ Also called when chosen character isn't found while zapping."
   (ajmc/reset)
   (ace-jump-done))
 
-;; Rename this?
-;; ace-jump-mc/mark?
 (defun ajmc/add-multiple-cursors (&optional prefix single-mode)
   "Use AceJump to add or remove multiple cursors.
 
