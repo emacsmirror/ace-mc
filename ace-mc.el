@@ -85,7 +85,6 @@
 Also called when chosen character isn't found while zapping."
   (interactive)
   (ajmc/reset)
-  (message "CANCELLED!")
   (ace-jump-done))
 
 ;; Rename this?
