@@ -13,19 +13,23 @@
 ;; ace-mc.el is a package that allows you to add a Multiple Cursors
 ;; mode cursor using ace-jump.
 
-;; This package adds the command `ace-jump-add-multiple-cursor', which
+;; This package adds the command `ajmc/add-multiple-cursors', which
 ;; acts like `ace-jump-mode'. It will continue to keep prompting for
 ;; places to add cursors until you hit Enter.
+;;
+;; You can use the command `ajmc/add-single-cursor' for a non-looping
+;; version of `ajmc/add-multiple-cursors'.
+
+;; If you have ace-jump bound on C-0, for example, I recommend the
+;; following key bindings:
+;;
+;; (global-set-key (kbd "C-)") 'ajmc/add-multiple-cursors)
+;; (global-set-key (kbd "C-M-)") 'ajmc/add-single-cursor)
 
 ;;; Code:
 (require 'ace-jump-mode)
 (require 'multiple-cursors-core)
 (require 'dash)
-
-(defcustom ajmc/always-loop nil
-  "Non-nil if `ace-jump-add-multiple-cursor' automatically loops without a prefix."
-  :type '(boolean)
-  :group 'ace-jump-mc)
 
 (defvar ajmc/marking nil
   "Internal flag for detecting if currently marking.")
@@ -86,14 +90,14 @@ Also called when chosen character isn't found while zapping."
 
 ;; Rename this?
 ;; ace-jump-mc/mark?
-(defun ace-jump-add-multiple-cursor (&optional prefix)
+(defun ajmc/add-multiple-cursors (&optional prefix single-mode)
   "Use AceJump to add or remove multiple cursors.
 
-ace-jump-add-multiple-cursor will prompt your for locations to
+ajmc/add-multiple-cursors will prompt your for locations to
 add multiple cursors.  If a cursor already exists at that
 location, it will be removed.  This process continues looping
-until you exit, for example by pressing return or escape.  You can
-customize the variable `ajmc/always-loop' to toggle this behavior.
+until you exit, for example by pressing return or escape. This
+happens unless SINGLE-MODE is set to 't'.
 
 Without a \\[universal-argument] prefix argument, use the default
 AceJump jumping mode as described in
@@ -101,16 +105,15 @@ AceJump jumping mode as described in
 or more \\[universal-argument] prefix arguments PREFIX, use the
 corresponding mode from `ace-jump-mode-submode-list'.  For
 example, by default
-   \\[ace-jump-add-multiple-cursor] ==> ace-jump-word-mode
-   \\[universal-argument] \\[ace-jump-add-multiple-cursor] ==> ace-jump-char-mode
-   \\[universal-argument] \\[universal-argument] \\[ace-jump-add-multiple-cursor] ==> ace-jump-line-mode
+   \\[ajmc/add-multiple-cursors] ==> ace-jump-word-mode
+   \\[universal-argument] \\[ajmc/add-multiple-cursors] ==> ace-jump-char-mode
+   \\[universal-argument] \\[universal-argument] \\[ajmc/add-multiple-cursors] ==> ace-jump-line-mode
 
 When the region is active, prompt for AceJump matches based on matching strings."
-  (interactive "p")
-  (let* ((preindex (/ (logb prefix) 2))
-	 (index (- preindex (if ajmc/always-loop 0 1)))
+  (interactive "pi")
+  (let* ((index (/ (logb prefix) 2))
 	(submode-list-length (length ace-jump-mode-submode-list)))
-    (setq ajmc/loop-marking (or ajmc/always-loop (use-region-p) (> prefix 1)))
+    (setq ajmc/loop-marking (not single-mode))
     (if (< index 0)
         (setq index 0))
     (if (>= index submode-list-length)
@@ -128,6 +131,13 @@ When the region is active, prompt for AceJump matches based on matching strings.
 	  (ajmc/add-char (buffer-substring-no-properties (mark) (point))))
       (ajmc/add-char (unless (eq ajmc/ace-mode-function 'ace-jump-line-mode)
 		       (read-char "Query Char:"))))))
+
+(defun ajmc/add-single-cursor (&optional prefix)
+    "This is a wrapper for `ajmc/add-multiple-cursors', only adding a single cursor.
+
+PREFIX is passed to `ajmc/add-multiple-cursors', see the documentation there."
+    (interactive "p")
+    (ajmc/add-multiple-cursors prefix t))
 
 (defun ajmc/regexp-mode (regex)
   "Ace Jump Multiple Cursor with a REGEX."
@@ -149,59 +159,10 @@ When the region is active, prompt for AceJump matches based on matching strings.
 ;; Use ace-jump-do when the region is active.
 
 (mapc (lambda (el) (add-to-list 'mc/cmds-to-run-once el))
-      '(ace-jump-add-multiple-cursor
-	ajmc/add-char
+      '(ajmc/add-char
 	ajmc/keyboard-reset
+	ajmc/add-multiple-cursors
+	ajmc/add-single-cursor
 	ace-jump-move))
-
-;; TODO: Add advice to show cursors? But the bad thing here is that
-;; with looping, removing a cursor will shift the letter combinations for the others.
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; TEST
-
-;; (defun ajmc/get-cursor-positions ()
-;;   (loop for va in (ace-jump-list-visual-area)
-;; 		  append (let* ((current-window (aj-visual-area-window va))
-;; 				(start-point (window-start current-window))
-;; 				(end-point   (window-end   current-window t)))
-;; 			   (with-selected-window current-window
-;; 			     (save-excursion
-;; 			       (loop for m in (mc/all-fake-cursors)
-;; 				     if (and (>= (overlay-start m) start-point)
-;; 					     (<= (overlay-start m) end-point))
-;; 				     collect (make-aj-position :offset (overlay-start m)
-;; 							       :visual-area va))
-;; 			       )))))
-
-;; (defun ajmc/add-cursors-to-candidates (orig-fun &rest args)
-;;   (delete-dups (append (apply orig-fun args)
-;; 		       (when ajmc/marking ajmc/list-cursors))))
-
-
-;; (defun ajmc/add-char (query-char)
-;;   "Call `ace-jump-char-mode' with a character QUERY-CHAR and add a cursor at the point."
-;;   (let ((ace-jump-mode-scope 'window))
-;;     (unless ajmc/marking		;We're already marking
-;;       (setq ajmc/list-cursors (ajmc/get-cursor-positions)))
-;;     (setq ajmc/marking t
-;; 	  ajmc/query-char query-char)
-;;     (if query-char
-;; 	(funcall ajmc/ace-mode-function query-char)
-;;       (funcall ajmc/ace-mode-function))
-;;     (when overriding-local-map
-;;       (define-key overriding-local-map [t] 'ajmc/keyboard-reset))))
-
-;; (defun ajmc/maybe-jump-start ()
-;;   "Push the mark when marking with `ace-jump-char-mode'."
-;;   (when ajmc/marking
-;;     (setq ajmc/saved-point (point)
-;; 	  ajmc/keyboard-reset nil)))
-
-
-;; (advice-add 'ace-jump-search-candidate :around #'ajmc/add-cursors-to-candidates)
-;; (advice-del 'ace-jump-search-candidate :around #'ajmc/add-cursors-to-candidates)
-
-;; (interactive (list (read-char "Query Char:")))
 
 ;;; ace-mc.el ends here
