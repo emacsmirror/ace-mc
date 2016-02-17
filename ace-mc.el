@@ -131,7 +131,9 @@ When the region is active, prompt for AceJump matches based on matching strings.
     (setq ajmc/ace-mode-function (if (use-region-p)
 				     'ajmc/regexp-mode
 				   (nth index ace-jump-mode-submode-list)))
-    (mc--reset-read-prompts)		;Sometimes we want to go to different characters. Gets reset with movement.
+    ;; Sometimes we want to go to different characters. Gets reset with movement.
+    ;; TODO: Fix coding convention violation. Accessing a private function. :/
+    (mc--reset-read-prompts)
     (if (use-region-p)
 	(progn
 	  (when (> (point) (mark))
