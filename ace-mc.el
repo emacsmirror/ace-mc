@@ -100,6 +100,7 @@ Also called when chosen character isn't found while zapping."
   (ajmc/reset)
   (ace-jump-done))
 
+;;;###autoload
 (defun ajmc/add-multiple-cursors (&optional prefix single-mode)
   "Use AceJump to add or remove multiple cursors.
 
@@ -144,6 +145,7 @@ When the region is active, prompt for AceJump matches based on matching strings.
       (ajmc/add-char (unless (eq ajmc/ace-mode-function 'ace-jump-line-mode)
 		       (read-char "Query Char:"))))))
 
+;;;###autoload
 (defun ajmc/add-single-cursor (&optional prefix)
     "This is a wrapper for `ajmc/add-multiple-cursors', only adding a single cursor.
 
@@ -177,4 +179,5 @@ PREFIX is passed to `ajmc/add-multiple-cursors', see the documentation there."
 	ajmc/add-single-cursor
 	ace-jump-move))
 
+(provide 'ace-mc)
 ;;; ace-mc.el ends here
