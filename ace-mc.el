@@ -86,7 +86,13 @@
     (mc/maybe-multiple-cursors-mode)
     (when ace-mc-saved-point
       (goto-char ace-mc-saved-point))
-    (if (and ace-mc-loop-marking (not ace-mc-keyboard-reset))
+    (if (and ace-mc-loop-marking
+	     (not ace-mc-keyboard-reset)
+	     ;; Pretty hacky, but we look at "candidate-list" defined
+	     ;; in ace-jump-do.  If it's defined without any cdr,
+	     ;; there's only one candidate, and we should stop
+	     ;; looping.
+	     (or (not (boundp 'candidate-list)) (cdr candidate-list)))
 	(ace-mc-add-char ace-mc-query-char)
       (ace-mc-reset))))
 
