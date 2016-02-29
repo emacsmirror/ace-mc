@@ -24,7 +24,7 @@ this:
 
 ```elisp
 (global-set-key (kbd "C-)") 'ace-mc/add-multiple-cursors)
-(global-set-key (kbd "M-C-)") 'ace-mc/add-single-cursor)
+(global-set-key (kbd "C-M-)") 'ace-mc/add-single-cursor)
 ```
 
 `ace-mc/add-multiple-cursors` prompts for a "Query Char" for the first
