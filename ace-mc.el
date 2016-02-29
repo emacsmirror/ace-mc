@@ -93,7 +93,7 @@
   "Reset the internal zapping variable flags."
   (setq ace-mc/marking nil))
 
-(defun ace-mc/keyboard-reset ()
+(defun ace-mc/do-keyboard-reset ()
   "Reset when `ace-jump-mode' is cancelled.
 Also called when chosen character isn't found while zapping."
   (interactive)
@@ -104,11 +104,10 @@ Also called when chosen character isn't found while zapping."
 (defun ace-mc/add-multiple-cursors (&optional prefix single-mode)
   "Use AceJump to add or remove multiple cursors.
 
-ace-mc/add-multiple-cursors will prompt your for locations to
-add multiple cursors.  If a cursor already exists at that
-location, it will be removed.  This process continues looping
-until you exit, for example by pressing return or escape. This
-happens unless SINGLE-MODE is set to 't'.
+ace-mc/add-multiple-cursors will prompt your for locations to add
+multiple cursors.  If a cursor already exists at that location,
+it will be removed.  This process continues looping until you
+exit, for example by pressing return or escape.
 
 Without a \\[universal-argument] prefix argument, use the default
 AceJump jumping mode as described in
@@ -119,6 +118,8 @@ example, by default
    \\[ace-mc/add-multiple-cursors] ==> ace-jump-word-mode
    \\[universal-argument] \\[ace-mc/add-multiple-cursors] ==> ace-jump-char-mode
    \\[universal-argument] \\[universal-argument] \\[ace-mc/add-multiple-cursors] ==> ace-jump-line-mode
+
+If SINGLE-MODE is set to 't', don't loop.
 
 When the region is active, prompt for AceJump matches based on matching strings."
   (interactive "pi")
@@ -147,9 +148,13 @@ When the region is active, prompt for AceJump matches based on matching strings.
 
 ;;;###autoload
 (defun ace-mc/add-single-cursor (&optional prefix)
-    "This is a wrapper for `ace-mc/add-multiple-cursors', only adding a single cursor.
+    "Add a single multiple cursor.
 
-PREFIX is passed to `ace-mc/add-multiple-cursors', see the documentation there."
+This is a wrapper for `ace-mc/add-multiple-cursors', only adding
+a single cursor.
+
+PREFIX is passed to `ace-mc/add-multiple-cursors', see the
+documentation there."
     (interactive "p")
     (ace-mc/add-multiple-cursors prefix t))
 
@@ -166,7 +171,7 @@ PREFIX is passed to `ace-mc/add-multiple-cursors', see the documentation there."
 	(funcall ace-mc/ace-mode-function query-char)
       (funcall ace-mc/ace-mode-function))
     (when overriding-local-map
-      (define-key overriding-local-map [t] 'ace-mc/keyboard-reset))))
+      (define-key overriding-local-map [t] 'ace-mc/do-keyboard-reset))))
 
 ;; Prevent keyboard-reset from being added to mc-list
 ;; mc/cmds-to-run-once
@@ -174,7 +179,7 @@ PREFIX is passed to `ace-mc/add-multiple-cursors', see the documentation there."
 
 (mapc (lambda (el) (add-to-list 'mc/cmds-to-run-once el))
       '(ace-mc/add-char
-	ace-mc/keyboard-reset
+	ace-mc/do-keyboard-reset
 	ace-mc/add-multiple-cursors
 	ace-mc/add-single-cursor
 	ace-jump-move))
