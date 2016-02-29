@@ -9,6 +9,8 @@ ace jump mode.
 
 <img src="https://jmm.io/ace-mc/delete-example.gif" alt="Deleting cursors with ace-mc">
 
+<img src="https://jmm.io/ace-mc/region-example.gif" alt="Using the region with ace-mc">
+
 # Usage
 
 Ace-mc comes with two commands:
