@@ -19,7 +19,7 @@ Both do pretty much the same thing.
 
 I have `ace-jump-mode` bound to <kbd>C-0</kbd>, so I bind
 `ace-mc/add-multiple-cursors` to <kbd>C-)</kbd> and
-`ace-mc/add-single-cursor` to <kbd>M-C-)</kbd>. The setup would be like
+`ace-mc/add-single-cursor` to <kbd>C-M-)</kbd>. The setup would be like
 this:
 
 ```elisp
