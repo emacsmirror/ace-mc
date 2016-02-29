@@ -4,7 +4,7 @@
 
 ;; Author: Josh Moller-Mara <jmm@cns.nyu.edu>
 ;; Version: 1.0
-;; Package-Requires: ((ace-jump-mode "1.0") (multiple-cursors "1.0"))
+;; Package-Requires: ((ace-jump-mode "1.0") (multiple-cursors "1.0") (dash "2.10.0"))
 ;; Keywords: motion, location, cursor
 ;; URL: https://github.com/mm--/ace-mc
 
