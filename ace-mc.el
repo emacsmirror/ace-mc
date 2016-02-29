@@ -1,4 +1,4 @@
-;;; ace-mc.el --- Ace Jump - Multiple Cursors
+;;; ace-mc.el --- Add multiple cursors quickly using ace jump
 
 ;; Copyright (C) 2015 Josh Moller-Mara
 
