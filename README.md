@@ -14,24 +14,24 @@ ace jump mode.
 # Usage
 
 Ace-mc comes with two commands:
-* `ace-mc/add-multiple-cursors`
-* `ace-mc/add-single-cursor`.
+* `ace-mc-add-multiple-cursors`
+* `ace-mc-add-single-cursor`.
 
 Both do pretty much the same thing.
 
 I have `ace-jump-mode` bound to <kbd>C-0</kbd>, so I bind
-`ace-mc/add-multiple-cursors` to <kbd>C-)</kbd> and
-`ace-mc/add-single-cursor` to <kbd>C-M-)</kbd>. The setup would be like
+`ace-mc-add-multiple-cursors` to <kbd>C-)</kbd> and
+`ace-mc-add-single-cursor` to <kbd>C-M-)</kbd>. The setup would be like
 this:
 
 ```elisp
-(global-set-key (kbd "C-)") 'ace-mc/add-multiple-cursors)
-(global-set-key (kbd "C-M-)") 'ace-mc/add-single-cursor)
+(global-set-key (kbd "C-)") 'ace-mc-add-multiple-cursors)
+(global-set-key (kbd "C-M-)") 'ace-mc-add-single-cursor)
 ```
 
-`ace-mc/add-multiple-cursors` prompts for a "Query Char" for the first
+`ace-mc-add-multiple-cursors` prompts for a "Query Char" for the first
 character of a word, much in the same way that Ace Jump does. In fact,
-`ace-mc/add-multiple-cursors` takes similar prefix arguments that
+`ace-mc-add-multiple-cursors` takes similar prefix arguments that
 `ace-jump-mode` does. So if you pass one <kbd>C-u</kbd> prefix to it, it'll
 activate `ace-jump-char-mode`, and with <kbd>C-u</kbd> <kbd>C-u</kbd> it'll activate
 `ace-jump-line-mode`.
@@ -47,5 +47,5 @@ When you have an active region, no "query char" is prompted
 for. Instead, you just get a list of locations that match the text in
 your region.
 
-`ace-mc/add-single-cursor` does the same thing as
-`ace-mc/add-multiple-cursors`, just without looping.
+`ace-mc-add-single-cursor` does the same thing as
+`ace-mc-add-multiple-cursors`, just without looping.

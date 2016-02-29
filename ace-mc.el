@@ -26,90 +26,90 @@
 ;; ace-mc.el is a package that allows you to quickly add and remove
 ;; multiple-cursors mode cursors using ace-jump.
 
-;; This package adds two commands: `ace-mc/add-multiple-cursors' and
-;; `ace-mc/add-single-cursor'.  Both commands act like
+;; This package adds two commands: `ace-mc-add-multiple-cursors' and
+;; `ace-mc-add-single-cursor'.  Both commands act like
 ;; `ace-jump-mode', accepting simliar prefix arguments. However,
 ;; instead of jumping to the location, as with ace-jump, the command
 ;; will add a new multiple cursor mark. If one is already there, it
 ;; will be removed. This makes it easy to remove cursors you've added
 ;; accidentally.
 
-;; `ace-mc/add-multiple-cursors' will continue to keep prompting for
+;; `ace-mc-add-multiple-cursors' will continue to keep prompting for
 ;; places to add or remove cursors until you hit Enter. The command
-;; `ace-mc/add-single-cursor' is a non-looping version.
+;; `ace-mc-add-single-cursor' is a non-looping version.
 
 ;; If you have ace-jump bound on C-0, for example, I recommend the
 ;; following key bindings:
 ;;
-;; (global-set-key (kbd "C-)") 'ace-mc/add-multiple-cursors)
-;; (global-set-key (kbd "C-M-)") 'ace-mc/add-single-cursor)
+;; (global-set-key (kbd "C-)") 'ace-mc-add-multiple-cursors)
+;; (global-set-key (kbd "C-M-)") 'ace-mc-add-single-cursor)
 
 ;;; Code:
 (require 'ace-jump-mode)
 (require 'multiple-cursors-core)
 (require 'dash)
 
-(defvar ace-mc/marking nil
+(defvar ace-mc-marking nil
   "Internal flag for detecting if currently marking.")
 
-(defvar ace-mc/keyboard-reset nil
+(defvar ace-mc-keyboard-reset nil
   "See if we've quit out yet.")
 
-(defvar ace-mc/query-char nil
+(defvar ace-mc-query-char nil
   "Char.")
 
-(defvar ace-mc/loop-marking nil
+(defvar ace-mc-loop-marking nil
   "Keep adding until we quit.")
 
-(defvar ace-mc/saved-point nil
+(defvar ace-mc-saved-point nil
   "The position of our cursor before jumping around with ace-jump.")
 
 ;; TODO: Fix description
-(defvar ace-mc/ace-mode-function nil
+(defvar ace-mc-ace-mode-function nil
   "The function from `ace-jump-mode-submode-list` to use.")
 
-(defun ace-mc/maybe-jump-start ()
+(defun ace-mc-maybe-jump-start ()
   "Push the mark when marking with `ace-jump-char-mode'."
-  (when ace-mc/marking
-    (setq ace-mc/saved-point (point)
-	  ace-mc/keyboard-reset nil)))
+  (when ace-mc-marking
+    (setq ace-mc-saved-point (point)
+	  ace-mc-keyboard-reset nil)))
 
-(defun ace-mc/maybe-jump-end ()
+(defun ace-mc-maybe-jump-end ()
   "Zap after marking with `ace-jump-char-mode.'."
-  (if (not ace-mc/marking)
-      (ace-mc/reset)
-    (let ((ace-mc/fake-cursor-at-point (-filter 'mc/fake-cursor-p (overlays-at (point)))))
-      (if ace-mc/fake-cursor-at-point
-	  (mc/remove-fake-cursor (car ace-mc/fake-cursor-at-point))
-	(unless (equal ace-mc/saved-point (point))
+  (if (not ace-mc-marking)
+      (ace-mc-reset)
+    (let ((ace-mc-fake-cursor-at-point (-filter 'mc/fake-cursor-p (overlays-at (point)))))
+      (if ace-mc-fake-cursor-at-point
+	  (mc/remove-fake-cursor (car ace-mc-fake-cursor-at-point))
+	(unless (equal ace-mc-saved-point (point))
 	  (mc/create-fake-cursor-at-point))))
     (mc/maybe-multiple-cursors-mode)
-    (when ace-mc/saved-point
-      (goto-char ace-mc/saved-point))
-    (if (and ace-mc/loop-marking (not ace-mc/keyboard-reset))
-	(ace-mc/add-char ace-mc/query-char)
-      (ace-mc/reset))))
+    (when ace-mc-saved-point
+      (goto-char ace-mc-saved-point))
+    (if (and ace-mc-loop-marking (not ace-mc-keyboard-reset))
+	(ace-mc-add-char ace-mc-query-char)
+      (ace-mc-reset))))
 
-(add-hook 'ace-jump-mode-before-jump-hook #'ace-mc/maybe-jump-start)
+(add-hook 'ace-jump-mode-before-jump-hook #'ace-mc-maybe-jump-start)
 
-(add-hook 'ace-jump-mode-end-hook #'ace-mc/maybe-jump-end)
+(add-hook 'ace-jump-mode-end-hook #'ace-mc-maybe-jump-end)
 
-(defun ace-mc/reset ()
+(defun ace-mc-reset ()
   "Reset the internal zapping variable flags."
-  (setq ace-mc/marking nil))
+  (setq ace-mc-marking nil))
 
-(defun ace-mc/do-keyboard-reset ()
+(defun ace-mc-do-keyboard-reset ()
   "Reset when `ace-jump-mode' is cancelled.
 Also called when chosen character isn't found while zapping."
   (interactive)
-  (ace-mc/reset)
+  (ace-mc-reset)
   (ace-jump-done))
 
 ;;;###autoload
-(defun ace-mc/add-multiple-cursors (&optional prefix single-mode)
+(defun ace-mc-add-multiple-cursors (&optional prefix single-mode)
   "Use AceJump to add or remove multiple cursors.
 
-ace-mc/add-multiple-cursors will prompt your for locations to add
+ace-mc-add-multiple-cursors will prompt your for locations to add
 multiple cursors.  If a cursor already exists at that location,
 it will be removed.  This process continues looping until you
 exit, for example by pressing return or escape.
@@ -120,9 +120,9 @@ AceJump jumping mode as described in
 or more \\[universal-argument] prefix arguments PREFIX, use the
 corresponding mode from `ace-jump-mode-submode-list'.  For
 example, by default
-   \\[ace-mc/add-multiple-cursors] ==> ace-jump-word-mode
-   \\[universal-argument] \\[ace-mc/add-multiple-cursors] ==> ace-jump-char-mode
-   \\[universal-argument] \\[universal-argument] \\[ace-mc/add-multiple-cursors] ==> ace-jump-line-mode
+   \\[ace-mc-add-multiple-cursors] ==> ace-jump-word-mode
+   \\[universal-argument] \\[ace-mc-add-multiple-cursors] ==> ace-jump-char-mode
+   \\[universal-argument] \\[universal-argument] \\[ace-mc-add-multiple-cursors] ==> ace-jump-line-mode
 
 If SINGLE-MODE is set to 't', don't loop.
 
@@ -130,13 +130,13 @@ When the region is active, prompt for AceJump matches based on matching strings.
   (interactive "pi")
   (let* ((index (/ (logb prefix) 2))
 	(submode-list-length (length ace-jump-mode-submode-list)))
-    (setq ace-mc/loop-marking (not single-mode))
+    (setq ace-mc-loop-marking (not single-mode))
     (if (< index 0)
         (setq index 0))
     (if (>= index submode-list-length)
         (setq index submode-list-length))
-    (setq ace-mc/ace-mode-function (if (use-region-p)
-				     'ace-mc/regexp-mode
+    (setq ace-mc-ace-mode-function (if (use-region-p)
+				     'ace-mc-regexp-mode
 				   (nth index ace-jump-mode-submode-list)))
     ;; Sometimes we want to go to different characters. Gets reset with movement.
     ;; TODO: Fix coding convention violation. Accessing a private function. :/
@@ -147,46 +147,46 @@ When the region is active, prompt for AceJump matches based on matching strings.
 	    (exchange-point-and-mark)
 	    (mc/execute-command-for-all-fake-cursors 'exchange-point-and-mark))
 	    (deactivate-mark)
-	  (ace-mc/add-char (buffer-substring-no-properties (mark) (point))))
-      (ace-mc/add-char (unless (eq ace-mc/ace-mode-function 'ace-jump-line-mode)
+	  (ace-mc-add-char (buffer-substring-no-properties (mark) (point))))
+      (ace-mc-add-char (unless (eq ace-mc-ace-mode-function 'ace-jump-line-mode)
 		       (read-char "Query Char:"))))))
 
 ;;;###autoload
-(defun ace-mc/add-single-cursor (&optional prefix)
+(defun ace-mc-add-single-cursor (&optional prefix)
     "Add a single multiple cursor.
 
-This is a wrapper for `ace-mc/add-multiple-cursors', only adding
+This is a wrapper for `ace-mc-add-multiple-cursors', only adding
 a single cursor.
 
-PREFIX is passed to `ace-mc/add-multiple-cursors', see the
+PREFIX is passed to `ace-mc-add-multiple-cursors', see the
 documentation there."
     (interactive "p")
-    (ace-mc/add-multiple-cursors prefix t))
+    (ace-mc-add-multiple-cursors prefix t))
 
-(defun ace-mc/regexp-mode (regex)
+(defun ace-mc-regexp-mode (regex)
   "Ace Jump Multiple Cursor with a REGEX."
   (ace-jump-do (regexp-quote regex)))
 
-(defun ace-mc/add-char (query-char)
+(defun ace-mc-add-char (query-char)
   "Call `ace-jump-char-mode' with a character QUERY-CHAR and add a cursor at the point."
   (let ((ace-jump-mode-scope 'window))
-    (setq ace-mc/marking t
-	  ace-mc/query-char query-char)
+    (setq ace-mc-marking t
+	  ace-mc-query-char query-char)
     (if query-char
-	(funcall ace-mc/ace-mode-function query-char)
-      (funcall ace-mc/ace-mode-function))
+	(funcall ace-mc-ace-mode-function query-char)
+      (funcall ace-mc-ace-mode-function))
     (when overriding-local-map
-      (define-key overriding-local-map [t] 'ace-mc/do-keyboard-reset))))
+      (define-key overriding-local-map [t] 'ace-mc-do-keyboard-reset))))
 
 ;; Prevent keyboard-reset from being added to mc-list
 ;; mc/cmds-to-run-once
 ;; Use ace-jump-do when the region is active.
 
 (mapc (lambda (el) (add-to-list 'mc/cmds-to-run-once el))
-      '(ace-mc/add-char
-	ace-mc/do-keyboard-reset
-	ace-mc/add-multiple-cursors
-	ace-mc/add-single-cursor
+      '(ace-mc-add-char
+	ace-mc-do-keyboard-reset
+	ace-mc-add-multiple-cursors
+	ace-mc-add-single-cursor
 	ace-jump-move))
 
 (provide 'ace-mc)
