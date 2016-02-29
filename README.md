@@ -35,12 +35,13 @@ activate `ace-jump-char-mode`, and with <kbd>C-u</kbd> <kbd>C-u</kbd> it'll acti
 `ace-jump-line-mode`.
 
 Once you enter a query char, you'll be prompted for locations to add
-`multiple-cursor-mode` cursors. You'll be continually prompted for
-more locations to add characters until you exit out of it by pressing
-<kbd>Enter</kbd> or <kbd>Esc</kbd> or anything really that's not alphabetic.
+`multiple-cursor-mode` cursors. If a cursor is already at the
+location, it'll be removed. You'll be continually prompted for more
+locations to add or remove cursors until you exit out of it by pressing
+<kbd>Enter</kbd> or <kbd>Esc</kbd> or anything really that's not
+alphabetic.
 
-Both commands also act differently when the you have an active
-region. When you have an active region, no "query char" is prompted
+When you have an active region, no "query char" is prompted
 for. Instead, you just get a list of locations that match the text in
 your region.
 
