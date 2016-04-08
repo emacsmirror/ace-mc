@@ -140,7 +140,7 @@ When the region is active, prompt for AceJump matches based on matching strings.
     (if (< index 0)
         (setq index 0))
     (if (>= index submode-list-length)
-        (setq index submode-list-length))
+        (setq index (- submode-list-length 1)))
     (setq ace-mc-ace-mode-function (if (use-region-p)
 				     'ace-mc-regexp-mode
 				   (nth index ace-jump-mode-submode-list)))
