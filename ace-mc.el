@@ -75,7 +75,7 @@
 	  ace-mc-keyboard-reset nil)))
 
 (defun ace-mc-maybe-jump-end ()
-  "Zap after marking with `ace-jump-char-mode.'."
+  "Add/remove cursor jumping with `ace-jump-char-mode.'."
   (if (not ace-mc-marking)
       (ace-mc-reset)
     (let ((ace-mc-fake-cursor-at-point (-filter 'mc/fake-cursor-p (overlays-at (point)))))
@@ -101,7 +101,7 @@
 (add-hook 'ace-jump-mode-end-hook #'ace-mc-maybe-jump-end)
 
 (defun ace-mc-reset ()
-  "Reset the internal zapping variable flags."
+  "Reset the internal jumping flags."
   (setq ace-mc-marking nil))
 
 (defun ace-mc-do-keyboard-reset ()
