@@ -11,6 +11,12 @@ ace jump mode.
 
 <img src="https://jmm.io/ace-mc/region-example.gif" alt="Using the region with ace-mc">
 
+# Installation
+
+Ace-mc is available through [MELPA](https://melpa.org/), so installing it is as easy as:
+
+	M-x package-install RET ace-mc RET
+
 # Usage
 
 Ace-mc comes with two commands:
